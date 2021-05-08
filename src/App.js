@@ -1,43 +1,65 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Note from "./components/Note";
+import { create as createNote, getAll as getAllNotes} from "./services/notes";
 
-
-function App(props) {
-  const [notes, setNotes] = useState(props.notes)
+function App() {
+  const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState()
+
+  useEffect(() => {
+    setLoading(true)
+    getAllNotes().then(notes => {
+      setNotes(notes)
+      setLoading(false)
+    })
+  }, [])
 
   const handleChange = (event) => {
     setNewNote(event.target.value)
   }
 
-  const handleClick = (event) => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    
     const noteToAddToState = {
-      id: notes.length + 1,
-      content: newNote,
-      date: new Date().toISOString(),
-      import: Math.random()
+      title: newNote,
+      body: newNote,
+      userId: 1
     }
 
-    setNotes([...notes, noteToAddToState])
+    createNote(noteToAddToState)
+    .then(note => {
+      setNotes([...notes, note])
+    })
+    .catch(error => {
+      setError(error)
+    })
+
     setNewNote("")
   }
-
-  if (typeof notes === "undefined" || notes.length === 0) {
-    return "No tenemos notas que mostrar"
-  }  
 
   return (
     <div>
       <h1>Notes</h1>
+
+      {
+        loading && <p>Cargando...</p>
+      }
+
       <ol>
-          { notes.map((note) => {
+          { notes
+            .map((note) => {
             return <Note key={note.id} { ...note }></Note>;
           })}          
       </ol>
-      <div>
+      <form onSubmit={handleSubmit}>
         <input type="text" onChange={handleChange} value={newNote}></input>
-          <button onClick={handleClick}>Crear nota</button>
-      </div>
+          <button>Crear nota</button>
+      </form>
+
+      { error && <span style={{color: "red"}}>La API ha petado</span>}
     </div>
   );
 }
