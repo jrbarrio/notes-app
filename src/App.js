@@ -3,10 +3,11 @@ import Note from "./components/Note";
 import Notification from "./components/Notification";
 import noteService from "./services/notes";
 import loginService from "./services/login";
+import LoginForm from "./components/LoginForm";
+import NoteForm from "./components/NoteForm";
 
 function App() {
   const [notes, setNotes] = useState([])
-  const [newNote, setNewNote] = useState("")
   const [loading, setLoading] = useState(false)
 
   const [errorMessage, setErrorMessage] = useState(null)
@@ -38,29 +39,16 @@ function App() {
     window.localStorage.removeItem('loggedNoteAppUser') 
   }
 
-  const handleChange = (event) => {
-    setNewNote(event.target.value)
-  }
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    
-    const noteToAddToState = {
-      content: newNote,
-      important: Math.random() < 0.5
-    }
-
+  const addNote = (note) => {
     const {token} = user
 
-    noteService.create(noteToAddToState, {token})
+    noteService.create(note, {token})
     .then(note => {
       setNotes([...notes, note])
     })
     .catch(error => {
       setErrorMessage("La API ha petado")
     })
-
-    setNewNote("")
   }
 
   const toggleImportanceOf = (id) => {
@@ -108,51 +96,25 @@ function App() {
     }    
   }
 
-  const renderLoginForm = () => {
-    return (
-      <form onSubmit={handleLoginSubmit}>
-        <input
-          type="text"
-          value={username}
-          name='Username'
-          placeholder='Username'
-          onChange={ event => setUsername(event.target.value)}></input>
-        <input
-          type="password"
-          value={password}
-          name='Password'
-          placeholder='Password'
-          onChange={ event => setPassword(event.target.value)}></input>
-        <button>Login</button>
-      </form>
-    )
-  }
-
-  const renderCreateNoteForm = () => {
-    return (
-      <>
-      <form onSubmit={handleSubmit}>
-        <input 
-          type="text" 
-          onChange={handleChange} 
-          value={newNote}
-          placeholder="Write your note..."
-        ></input>
-          <button>Crear nota</button>
-      </form>
-      <div>
-        <button onClick={handleLogout}>Cerrar sesion</button>
-      </div>
-      </>
-    )
-  }
-
   return (
     <div>
       <h1>Notes</h1>
       <Notification message={errorMessage}></Notification>
 
-      {user? renderCreateNoteForm(): renderLoginForm()}
+      {
+        user ? 
+        <NoteForm
+          addNote={addNote}
+          handleLogout={handleLogout}
+        ></NoteForm> :
+        <LoginForm 
+          username={username} 
+          password={password} 
+          handleUsernameChange={ event => setUsername(event.target.value) }
+          handlePasswordChange={ event => setPassword(event.target.value) }
+          handleSubmit={handleLoginSubmit}
+        ></LoginForm>
+      }
 
       {
         loading && <p>Cargando...</p>
