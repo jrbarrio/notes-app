@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Note from "./components/Note";
+import Note from "./components/note/Note";
 import Notification from "./components/Notification";
 import noteService from "./services/notes";
 import loginService from "./services/login";

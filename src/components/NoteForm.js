@@ -1,5 +1,5 @@
 import { useRef, useState } from "react"
-import Togglable from "./Togglable"
+import Togglable from "./togglable/Togglable"
 
 export default function NoteForm(props) {
 

@@ -1,9 +1,9 @@
-import Togglable from "./Togglable";
+import Togglable from "./togglable/Togglable";
 import PropTypes from "prop-types";
 
 export default function LoginForm (props) {
     return (
-        <Togglable>
+        <Togglable buttonLable='Show'>
             <form onSubmit={props.handleSubmit}>
                 <input
                     type="text"
