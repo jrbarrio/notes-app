@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 export default function LoginForm (props) {
     return (
-        <Togglable buttonLable='Show'>
+        <Togglable buttonLabel='Show'>
             <form onSubmit={props.handleSubmit}>
                 <input
                     type="text"
@@ -17,7 +17,7 @@ export default function LoginForm (props) {
                     name='Password'
                     placeholder='Password'
                     onChange={ props.handlePasswordChange }></input>
-                <button>Login</button>
+                <button id="form-login-button">Login</button>
             </form>
         </Togglable>
     )
